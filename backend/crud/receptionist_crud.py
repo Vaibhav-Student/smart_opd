@@ -5,11 +5,16 @@ def validate_receptionist(rec, db) :
     return db.query(Receptionist).filter(
         Receptionist.username == rec.username,
         Receptionist.password == rec.password,
-        Receptionist.status == "Active"
+        Receptionist.status == "active"
     ).first()
     
 
 def add_receptionist(rec, db):
+    if db.query(Receptionist).filter(Receptionist.username == rec.username).first():
+        return {"message": "A receptionist with this username already exists.", "email_sent": False}
+    if db.query(Receptionist).filter(Receptionist.contact == rec.contact).first():
+        return {"message": "A receptionist with this contact number already exists.", "email_sent": False}
+
     newRec = Receptionist(
         name = rec.name,
         dob = rec.dob,
@@ -19,7 +24,7 @@ def add_receptionist(rec, db):
         username = rec.username,
         password = rec.password,
         shift = rec.shift,
-        status = rec.status,
+        status = rec.status or "Active",
     )
     
     db.add(newRec)

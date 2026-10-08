@@ -75,7 +75,6 @@ function formatStatus(status) {
 }
 
 
-
 // ---------- Component ----------
 
 function Doctors() {
@@ -120,7 +119,7 @@ function Doctors() {
       });
 
     return () => controller.abort();
-  }, []);
+  }, [API_BASE_URL]);
 
   const specialties = useMemo(() => {
     const values = doctors
@@ -326,18 +325,15 @@ function Doctors() {
         {/* ============ HEADER ============ */}
         <div className="doctors-header">
           <div>
-            {/* Breadcrumb */}
-            <div className="doctors-header__breadcrumb">
-              <span className="doctors-header__breadcrumb-primary">Personnel</span>
-              <div className="doctors-header__breadcrumb-dot" />
-              <span className="doctors-header__breadcrumb-secondary">Q3 Roster</span>
-            </div>
-
             {/* Title */}
-            <h1 className="doctors-header__title">
-              Medical Staff
-              <div className="doctors-header__title-accent" />
+            <h1 className="doctors-header__title" style={{ fontSize: '28px', fontWeight: 600, color: '#0f172a' }}>
+              Doctors
             </h1>
+            <div>
+              <span className="doctors-header__subtitle">
+                Manage your hospital's doctors and their availability.
+              </span>
+            </div>
           </div>
 
           {/* Action Buttons */}

@@ -24,6 +24,12 @@
 **/__pycache__/
 *.py[cod]
 
+# backend secrets and generated Python files
+/backend/.env
+/.env
+**/__pycache__/
+*.py[cod]
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

@@ -25,6 +25,7 @@ export default function DoctorLiveQueue() {
   const fetchQueueData = useCallback(async () => {
     if (!doctorId) return;
     try {
+      // Single-lane fetch: avoids full-hospital recompute every 6s (real-world scale fix).
       const res = await fetch(`${API}/queues/board?did=${doctorId}`, { headers: getAuthHeaders() });
       if (!res.ok) throw new Error('Failed to fetch queue');
       const board = await res.json();
@@ -146,34 +147,31 @@ export default function DoctorLiveQueue() {
 
   const getCardClasses = (cardType) => {
     switch (cardType) {
-      case 'serving': return 'queue-card-consulting border-blue-200 bg-white ring-1 ring-blue-100/80';
-      case 'called': return 'queue-card-called border-sky-200 bg-white ring-1 ring-sky-100/80';
-      case 'urgent': return 'queue-card-urgent border-red-200 bg-white ring-1 ring-red-100/80';
-      case 'skipped': return 'queue-card-skipped border-slate-200 bg-slate-50/70';
-      default: return 'border-slate-200/90 bg-white';
+      case 'serving': return 'queue-card-consulting bg-blue-50/80 border-blue-300';
+      case 'called': return 'bg-sky-50/70 border-sky-300';
+      case 'urgent': return 'queue-card-urgent border-red-300';
+      case 'skipped': return 'bg-slate-100/60 border-slate-300 opacity-60';
+      default: return 'bg-slate-50/50 border-slate-200';
     }
   };
 
   const getStatusBadgeClasses = (cardType) => {
     switch (cardType) {
-      case 'serving': return 'bg-blue-50 text-blue-700 ring-blue-200/80';
-      case 'called': return 'bg-sky-50 text-sky-700 ring-sky-200/80';
-      case 'urgent': return 'bg-red-50 text-red-700 ring-red-200/80';
-      case 'skipped': return 'bg-slate-100 text-slate-500 ring-slate-200/80';
-      default: return 'bg-amber-50 text-amber-700 ring-amber-200/80';
+      case 'serving': return 'bg-blue-600 text-white';
+      case 'called': return 'bg-sky-500 text-white';
+      case 'urgent': return 'bg-red-600 text-white';
+      case 'skipped': return 'bg-slate-400 text-white';
+      default: return 'bg-slate-200 text-slate-700';
     }
   };
 
   if (loading) {
     return (
       <DoctorLayout activeTab="Live Queue">
-        <div className="doctor-live-queue-container flex items-center justify-center py-24">
-          <div className="text-center space-y-4">
-            <div className="relative mx-auto h-12 w-12">
-              <div className="absolute inset-0 rounded-full border-4 border-blue-100"></div>
-              <div className="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"></div>
-            </div>
-            <p className="text-sm font-semibold text-slate-500">Loading live queue board...</p>
+        <div className="doctor-live-queue-container flex items-center justify-center py-20">
+          <div className="text-center space-y-3">
+            <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p className="text-sm font-bold text-slate-500">Loading queue...</p>
           </div>
         </div>
       </DoctorLayout>
@@ -182,161 +180,114 @@ export default function DoctorLiveQueue() {
 
   return (
     <DoctorLayout activeTab="Live Queue">
-      <div className="doctor-live-queue-container animate-fadeIn overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm">
-        {/* ---------- Section header ---------- */}
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 px-6 py-4">
-          <div className="min-w-0">
-            <h2 className="text-base font-bold text-slate-900">Live OPD Queue Board</h2>
-            <p className="mt-0.5 text-xs text-slate-500">
-              Real-time queue tracking <span className="px-1 text-slate-300">•</span>{' '}
-              {doctorData?.specialization || 'General'} <span className="px-1 text-slate-300">•</span>{' '}
-              {allCards.length} total entries
+      <div className="doctor-live-queue-container bg-white rounded-3xl p-8 border border-slate-200 shadow-sm space-y-6 animate-fadeIn">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+          <div>
+            <h3 className="text-2xl font-bold text-slate-900">Live OPD Queue Board</h3>
+            <p className="text-sm text-slate-500 font-semibold font-bold mt-0.5">
+              Real-time queue • {doctorData?.specialization || 'General'} • {allCards.length} total entries
             </p>
           </div>
-          <div className="flex shrink-0 items-center gap-2.5">
-            <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700 ring-1 ring-inset ring-emerald-200">
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200">
               {completedCount} Completed
             </span>
             <button
-              type="button"
               onClick={handleCallNext}
               disabled={actionLoading}
-              className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 text-sm font-semibold text-white shadow-md shadow-blue-500/20 transition-all duration-150 hover:from-blue-700 hover:to-indigo-700 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-2 disabled:opacity-50"
             >
-              <span className="material-symbols-outlined text-[18px] leading-none">play_arrow</span>
+              <span className="material-symbols-outlined text-base">play_arrow</span>
               Call Next Patient
             </button>
           </div>
         </div>
 
-        {/* ---------- Board Cards Grid ---------- */}
-        <div className="p-6">
-          {allCards.length === 0 ? (
-            <div className="px-6 py-16 text-center">
-              <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-300 ring-1 ring-slate-100">
-                <span className="material-symbols-outlined text-[28px] leading-none">queue</span>
-              </span>
-              <p className="mt-4 text-base font-bold text-slate-800">No patients in queue</p>
-              <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto">Patients will appear here in real-time when assigned by the receptionist</p>
-            </div>
-          ) : (
-            <ul className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {allCards.map((item) => (
-                <li
-                  key={item.qid}
-                  className={`relative flex flex-col justify-between overflow-hidden rounded-2xl border p-5 transition-all duration-200 hover:shadow-md ${getCardClasses(item.cardType)}`}
-                >
-                  <div>
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <span className="inline-flex items-center rounded-lg bg-blue-50 px-2.5 py-0.5 text-xs font-bold tabular-nums text-blue-700 ring-1 ring-inset ring-blue-100">
-                          Token #{item.token}
-                        </span>
-                        <div className="mt-2 flex items-center gap-2.5">
-                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-xs font-bold text-slate-600">
-                            {getInitials(item.patient_name)}
-                          </span>
-                          <p className="truncate text-base font-bold text-slate-900">{item.patient_name}</p>
-                        </div>
-                      </div>
-                      <span
-                        className={[
-                          'inline-flex shrink-0 items-center rounded-lg px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ring-1 ring-inset',
-                          getStatusBadgeClasses(item.cardType),
-                        ].join(' ')}
+        {allCards.length === 0 ? (
+          <div className="text-center py-16">
+            <span className="material-symbols-outlined text-6xl text-slate-300">queue</span>
+            <p className="text-sm font-bold text-slate-400 mt-3">No patients in queue</p>
+            <p className="text-xs text-slate-400 mt-1">Patients will appear here when assigned by receptionist</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {allCards.map((item) => (
+              <div
+                key={item.qid}
+                className={`p-5 rounded-2xl border transition-all ${getCardClasses(item.cardType)}`}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-2xl font-black text-blue-600">T-{item.token}</span>
+                  <span className={`text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider ${getStatusBadgeClasses(item.cardType)}`}>
+                    {item.displayStatus}
+                  </span>
+                </div>
+                <h4 className="text-lg font-bold text-slate-900">{item.patient_name}</h4>
+                <p className="text-xs text-slate-500 font-bold mt-0.5">
+                  Priority: {item.priority || 'Low'} • Score: {item.final_score} • Bonus: +{item.waiting_bonus || 0}
+                </p>
+                {item.patient_contact && (
+                  <p className="text-xs text-slate-600 font-bold mt-1">Mobile: {item.patient_contact}</p>
+                )}
+                {item.estimated_wait_time > 0 && item.cardType === 'waiting' && (
+                  <p className="text-xs text-slate-500 font-bold mt-1">Est. wait: ~{item.estimated_wait_time} min</p>
+                )}
+                <div className="pt-4 mt-4 border-t border-slate-200/60 flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-400">
+                    Pos: #{item.queue_position || '—'}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    {item.cardType === 'serving' && (
+                      <button
+                        onClick={() => handleComplete(item.qid)}
+                        disabled={actionLoading}
+                        className="px-4 py-1.5 bg-emerald-600 text-white font-bold text-xs rounded-lg shadow-sm hover:bg-emerald-700 disabled:opacity-50"
                       >
-                        {item.displayStatus}
-                      </span>
-                    </div>
-
-                    <div className="mt-3.5 space-y-1.5 text-xs text-slate-500">
-                      <p className="flex items-center gap-1.5 flex-wrap">
-                        <span className="font-semibold text-slate-700">Priority:</span> {item.priority || 'Low'}
-                        <span className="text-slate-300">•</span>
-                        <span>Score: <span className="font-semibold text-slate-700">{item.final_score}</span></span>
-                        <span className="text-slate-300">•</span>
-                        <span>Wait Bonus: <span className="text-emerald-600 font-semibold">+{item.waiting_bonus || 0}</span></span>
-                      </p>
-                      {item.patient_contact && (
-                        <p className="flex items-center gap-1.5 text-slate-600">
-                          <span className="material-symbols-outlined text-[14px] leading-none text-slate-400">call</span>
-                          {item.patient_contact}
-                        </p>
-                      )}
-                      {item.estimated_wait_time > 0 && item.cardType === 'waiting' && (
-                        <p className="flex items-center gap-1.5 font-medium text-slate-600 tabular-nums">
-                          <span className="material-symbols-outlined text-[14px] leading-none text-slate-400">schedule</span>
-                          Est. wait: ~{item.estimated_wait_time} min
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-100 pt-3.5">
-                    <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600 tabular-nums">
-                      Pos #{item.queue_position || '—'}
-                    </span>
-                    <div className="flex items-center gap-2">
-                      {item.cardType === 'serving' && (
+                        Mark Complete
+                      </button>
+                    )}
+                    {item.cardType === 'called' && (
+                      <>
                         <button
-                          type="button"
-                          onClick={() => handleComplete(item.qid)}
+                          onClick={() => handleServe(item.qid)}
                           disabled={actionLoading}
-                          className="inline-flex h-8 items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 text-xs font-semibold text-white shadow-sm transition-all duration-150 hover:bg-emerald-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="px-4 py-1.5 bg-blue-600 text-white font-bold text-xs rounded-lg shadow-sm hover:bg-blue-700 disabled:opacity-50"
                         >
-                          <span className="material-symbols-outlined text-[15px] leading-none">check</span>
-                          Mark Complete
+                          Start Serving
                         </button>
-                      )}
-                      {item.cardType === 'called' && (
-                        <>
-                          <button
-                            type="button"
-                            onClick={() => handleServe(item.qid)}
-                            disabled={actionLoading}
-                            className="inline-flex h-8 items-center gap-1 rounded-xl bg-blue-600 px-3.5 text-xs font-semibold text-white shadow-sm transition-all duration-150 hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          >
-                            <span className="material-symbols-outlined text-[14px] leading-none">stethoscope</span>
-                            Start Serving
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleSkip(item.qid)}
-                            disabled={actionLoading}
-                            className="inline-flex h-8 items-center rounded-xl border border-amber-200 bg-white px-3 text-xs font-semibold text-amber-700 transition-colors duration-150 hover:bg-amber-50 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          >
-                            Skip
-                          </button>
-                        </>
-                      )}
-                      {(item.cardType === 'waiting' || item.cardType === 'urgent') && (
                         <button
-                          type="button"
                           onClick={() => handleSkip(item.qid)}
                           disabled={actionLoading}
-                          className="inline-flex h-8 items-center rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-600 transition-colors duration-150 hover:bg-slate-50 hover:text-slate-900 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="px-3 py-1.5 bg-amber-50 text-amber-600 font-bold text-xs rounded-lg border border-amber-200 hover:bg-amber-600 hover:text-white disabled:opacity-50"
                         >
                           Skip
                         </button>
-                      )}
-                      {item.cardType === 'skipped' && (
-                        <button
-                          type="button"
-                          onClick={() => handleRecall(item.qid)}
-                          disabled={actionLoading}
-                          className="inline-flex h-8 items-center gap-1 rounded-xl bg-blue-600 px-3.5 text-xs font-semibold text-white shadow-sm transition-all duration-150 hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          <span className="material-symbols-outlined text-[14px] leading-none">replay</span>
-                          Recall
-                        </button>
-                      )}
-                    </div>
+                      </>
+                    )}
+                    {(item.cardType === 'waiting' || item.cardType === 'urgent') && (
+                      <button
+                        onClick={() => handleSkip(item.qid)}
+                        disabled={actionLoading}
+                        className="px-3 py-1.5 bg-slate-50 text-slate-500 font-bold text-xs rounded-lg border border-slate-200 hover:bg-slate-200 disabled:opacity-50"
+                      >
+                        Skip
+                      </button>
+                    )}
+                    {item.cardType === 'skipped' && (
+                      <button
+                        onClick={() => handleRecall(item.qid)}
+                        disabled={actionLoading}
+                        className="px-4 py-1.5 bg-blue-600 text-white font-bold text-xs rounded-lg shadow-sm hover:bg-blue-700 disabled:opacity-50"
+                      >
+                        Recall
+                      </button>
+                    )}
                   </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </DoctorLayout>
   );

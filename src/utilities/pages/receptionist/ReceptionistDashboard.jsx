@@ -58,7 +58,7 @@ export default function ReceptionistDashboard() {
   const [department, setDepartment] = useState('');
   const [totalToday, setTotalToday] = useState(0);
   const [emergencyCases, setEmergencyCases] = useState(0);
-  const [avgWaitTime, setAvgWaitTime] = useState(15);
+  const [avgWaitTime, setAvgWaitTime] = useState(0);
   const [departmentsList, setDepartmentsList] = useState([
     'General Medicine', 'Cardiology', 'Pediatrics', 'Orthopedics', 'Neurology'
   ]);
@@ -140,13 +140,15 @@ export default function ReceptionistDashboard() {
       const todayVisitIds = new Set(visitsToday.map((v) => v.vid));
       const todayQueues = queues.filter((q) => todayVisitIds.has(q.vid));
 
+      const activeQueueStatuses = new Set(['waiting', 'called', 'serving', 'in consultation']);
       const waitValues = todayQueues
+        .filter((q) => activeQueueStatuses.has(String(q.status || '').trim().toLowerCase()))
         .map((q) => Number(q.estimated_wait_time))
-        .filter((value) => Number.isFinite(value));
+        .filter((value) => Number.isFinite(value) && value >= 0);
 
       setAvgWaitTime(
         waitValues.length
-          ? Math.round(waitValues.reduce((sum, value) => sum + value, 0) / waitValues.length)
+          ? Math.max(0, Math.round(waitValues.reduce((sum, value) => sum + value, 0) / waitValues.length))
           : 0
       );
 
@@ -518,46 +520,29 @@ export default function ReceptionistDashboard() {
 
   return (
     <ReceptionistLayout activeTab="Dashboard">
-      <div className="receptionist-dashboard-container space-y-8 animate-fadeIn">
+      <div className="receptionist-dashboard-container space-y-6 animate-fadeIn">
         {/* Top Stat Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Card 1 — Registered Today */}
-          <div className="group relative flex min-h-[188px] flex-col overflow-hidden rounded-3xl border border-[#dbe7ff] bg-gradient-to-b from-[#f4f8ff] to-white p-5 shadow-[0_2px_14px_rgba(0,74,198,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(0,74,198,0.16)]">
-            <div className="pointer-events-none absolute inset-x-10 top-0 h-[3px] rounded-full bg-gradient-to-r from-[#004ac6] via-[#4f8cff] to-[#0ea5a4] opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
-            <span className="material-symbols-outlined pointer-events-none absolute -bottom-5 -right-3 select-none text-[92px] text-[#004ac6]/[.06] transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6">how_to_reg</span>
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm relative overview-card-hover">
             <div className="relative flex items-center justify-between gap-3">
               <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
                 Registered today
               </p>
-              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#004ac6] to-[#4f8cff] text-white shadow-[0_8px_18px_rgba(0,74,198,0.4)] transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3">
+              <span className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
                 <span className="material-symbols-outlined text-[22px]">person_add</span>
               </span>
             </div>
-            <h4 className="relative mt-2 bg-gradient-to-br from-[#0b1c30] to-[#004ac6] bg-clip-text font-headline-md text-[2.6rem] font-bold leading-none tracking-tight text-transparent"><CountUp value={totalToday} /></h4>
-            <p className="relative mt-1.5 inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-600">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-              </span>
-              Live OPD flow
-            </p>
-            <div className="relative mt-auto flex items-end gap-1 pt-3" aria-hidden="true">
-              {[35, 55, 42, 68, 52, 80, 62].map((h, i) => (
-                <span key={i} className="w-full rounded-sm bg-gradient-to-t from-[#004ac6]/25 to-[#004ac6]/60" style={{ height: `${h * 0.32}px` }}></span>
-              ))}
-              <span className="ml-1 shrink-0 text-[10px] font-bold uppercase tracking-wider text-slate-400">today</span>
-            </div>
+            <h4 className="text-3xl font-semibold font-black text-slate-900"><CountUp value={totalToday} /></h4>
           </div>
 
           {/* Card 2 — Emergency Cases */}
-          <div className="group relative flex min-h-[188px] flex-col overflow-hidden rounded-3xl border border-[#ffe1de] bg-gradient-to-b from-[#fff5f4] to-white p-5 shadow-[0_2px_14px_rgba(220,38,38,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(220,38,38,0.16)]">
-            <div className="pointer-events-none absolute inset-x-10 top-0 h-[3px] rounded-full bg-gradient-to-r from-[#e11d48] via-[#f43f5e] to-[#fb923c] opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
-            <span className="material-symbols-outlined pointer-events-none absolute -bottom-5 -right-3 select-none text-[92px] text-[#e11d48]/[.06] transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">ecg_heart</span>
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm relative overview-card-hover">
             <div className="relative flex items-center justify-between gap-3">
               <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
                 Emergency cases
               </p>
-              <span className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#e11d48] to-[#fb7185] text-white shadow-[0_8px_18px_rgba(225,29,72,0.4)] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+              <span className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
                 <span className="material-symbols-outlined text-[22px]">e911_emergency</span>
                 {emergencyCases > 0 && (
                   <span className="absolute -right-1 -top-1 flex h-3.5 w-3.5">
@@ -567,101 +552,41 @@ export default function ReceptionistDashboard() {
                 )}
               </span>
             </div>
-            <h4 className="relative mt-2 bg-gradient-to-br from-[#0b1c30] to-[#e11d48] bg-clip-text font-headline-md text-[2.6rem] font-bold leading-none tracking-tight text-transparent"><CountUp value={emergencyCases} padStart={2} /></h4>
-            <p className={`relative mt-1.5 inline-flex items-center gap-1.5 text-[11px] font-bold ${emergencyCases > 0 ? 'text-[#e11d48]' : 'text-slate-400'}`}>
-              <span className={`h-1.5 w-1.5 rounded-full ${emergencyCases > 0 ? 'animate-pulse bg-[#e11d48]' : 'bg-slate-300'}`}></span>
-              {emergencyCases > 0 ? 'Needs triage focus' : 'No active emergencies'}
-            </p>
-            <div className="relative mt-auto flex items-center gap-1.5 pt-3" aria-hidden="true">
-              {['Low', 'Med', 'High', 'Crit'].map((t, i) => (
-                <span key={t} className={`flex-1 rounded-md px-1 py-1 text-center text-[9px] font-bold uppercase tracking-wide ${i === 3 && emergencyCases > 0 ? 'bg-[#e11d48] text-white shadow-sm' : 'bg-slate-100 text-slate-400'}`}>{t}</span>
-              ))}
-              <span className="ml-1 shrink-0 text-[10px] font-bold uppercase tracking-wider text-slate-400">triage</span>
-            </div>
+            <h4 className="text-3xl font-semibold font-black text-slate-900"><CountUp value={emergencyCases} padStart={2} /></h4>
           </div>
 
           {/* Card 3 — Average Wait Time */}
-          <div className="group relative flex min-h-[188px] flex-col overflow-hidden rounded-3xl border border-[#fde9c8] bg-gradient-to-b from-[#fffaf0] to-white p-5 shadow-[0_2px_14px_rgba(245,158,11,0.07)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(245,158,11,0.18)]">
-            <div className="pointer-events-none absolute inset-x-10 top-0 h-[3px] rounded-full bg-gradient-to-r from-[#d97706] via-[#f59e0b] to-[#fbbf24] opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
-            <span className="material-symbols-outlined pointer-events-none absolute -bottom-5 -right-3 select-none text-[92px] text-[#d97706]/[.07] transition-transform duration-500 group-hover:rotate-12">schedule</span>
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm relative overview-card-hover">
             <div className="relative flex items-center justify-between gap-3">
               <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
                 Avg. wait time
               </p>
-              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#d97706] to-[#f59e0b] text-white shadow-[0_8px_18px_rgba(217,119,6,0.4)] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+              <span className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
                 <span className="material-symbols-outlined text-[22px]">pace</span>
               </span>
             </div>
-            <div className="relative mt-2 flex items-end gap-3">
-              <h4 className="bg-gradient-to-br from-[#0b1c30] to-[#b45309] bg-clip-text font-headline-md text-[2.6rem] font-bold leading-none tracking-tight text-transparent">
-                <CountUp value={avgWaitTime} /><span className="text-xl font-bold">m</span>
-              </h4>
-              <svg viewBox="0 0 36 36" className="mb-1 h-10 w-10 -rotate-90" aria-hidden="true">
-                <circle cx="18" cy="18" r="15.5" fill="none" stroke="#f1e3c8" strokeWidth="4" />
-                <circle cx="18" cy="18" r="15.5" fill="none" stroke="url(#waitGrad)" strokeWidth="4" strokeLinecap="round" strokeDasharray="97.4" strokeDashoffset={97.4 - Math.min(97.4, (Number(avgWaitTime) || 0) / 60 * 97.4)} className="transition-all duration-700" />
-                <defs>
-                  <linearGradient id="waitGrad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#d97706" />
-                    <stop offset="100%" stopColor="#f59e0b" />
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
-            <p className="relative mt-1.5 inline-flex items-center gap-1.5 text-[11px] font-bold text-[#b45309]">
-              <span className="material-symbols-outlined text-sm">insights</span>
-              Across active queues
-            </p>
-            <div className="relative mt-auto flex items-center gap-2 pt-3" aria-hidden="true">
-              <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#f7e8cf]">
-                <div className="h-full rounded-full bg-gradient-to-r from-[#d97706] to-[#f59e0b] transition-all duration-700" style={{ width: `${Math.min(100, (Number(avgWaitTime) || 0) / 45 * 100)}%` }}></div>
-              </div>
-              <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-slate-400">target &lt;15m</span>
-            </div>
+            <h4 className="text-3xl font-semibold font-black text-slate-900">
+              {avgWaitTime} <span className="text-lg font-semibold text-slate-500">min</span>
+            </h4>
           </div>
 
           {/* Card 4 — Reception Station */}
-          <div className="group relative flex min-h-[188px] flex-col overflow-hidden rounded-3xl bg-[#0a1730] p-5 text-white shadow-[0_14px_36px_rgba(6,20,50,0.45)] ring-1 ring-white/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_22px_55px_rgba(6,20,50,0.55)]">
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#004ac6]/35 via-transparent to-[#0ea5a4]/20"></div>
-            <div className="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full bg-[#4f8cff]/25 blur-2xl transition-opacity duration-500 group-hover:opacity-100"></div>
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent"></div>
+          <div className="reception-station-card rounded-2xl p-6 border border-slate-200 shadow-sm relative overview-card-hover">
             <div className="relative flex items-center justify-between gap-3">
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">
+              <p className="text-xs font-bold text-slate-400">
                 Reception station
               </p>
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300 ring-1 ring-emerald-300/30">
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-                </span>
+              <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 border border-emerald-200">
                 Open
               </span>
             </div>
-            <h4 className="relative mt-2 text-[1.35rem] font-bold leading-tight tracking-tight">Main Reception</h4>
-            <div className="relative mt-2 space-y-1.5 text-[11px] font-semibold text-slate-300">
-              <p className="flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-[15px] text-blue-300">location_on</span>
-                Counter A-01 · Ground floor
-              </p>
-              <p className="flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-[15px] text-blue-300">schedule</span>
-                Morning shift · 08:00 – 14:00
-              </p>
-            </div>
-            <div className="relative mt-auto flex items-center gap-2.5 border-t border-white/10 pt-3">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#4f8cff] to-[#0ea5a4] text-[11px] font-bold text-white ring-2 ring-white/20">
-                {(staffName || 'R').split(' ').map((w) => w.charAt(0)).slice(0, 2).join('')}
-              </span>
-              <div className="min-w-0">
-                <p className="truncate text-[13px] font-bold leading-tight">{staffName}</p>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">On desk now</p>
-              </div>
-              <span className="material-symbols-outlined ml-auto text-lg text-slate-500 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-white">arrow_forward</span>
-            </div>
+            <h4 className="mt-2 text-xl font-semibold font-black text-slate-900">Main Reception</h4>
+            <p className="mt-1 text-xs font-medium text-slate-500">Counter A-01 · {staffName}</p>
           </div>
         </div>
 
         {/* Form and Live Queue Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <div id="patient-form" className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-[0_8px_30px_rgba(11,28,48,0.06)]">
               <div className="flex flex-col gap-4 border-b border-slate-100 bg-gradient-to-r from-[#f3f7ff] to-white p-6 sm:flex-row sm:items-center sm:justify-between sm:p-7">
@@ -676,15 +601,21 @@ export default function ReceptionistDashboard() {
                     </p>
                   </div>
                 </div>
-                <div className="relative overflow-hidden rounded-2xl bg-slate-900 px-5 py-3 text-white shadow-md sm:text-right">
-                  <div className="pointer-events-none absolute -right-8 -top-10 h-24 w-24 rounded-full bg-[#004ac6]/50 blur-2xl"></div>
-                  <span className="relative block text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Next OPD token</span>
+                <div className="relative overflow-hidden rounded-2xl bg-slate-900 px-5 py-3 text-white sm:text-right">
+                  <div className="absolute -right-8 -top-10 h-24 w-24 rounded-full bg-[#004ac6]"></div>
+                  <div className="absolute -right-8 -top-50 h-24 w-24 rounded-full bg-[#004ac6]"></div>
+                  <div className="absolute -left-8 -top-50 h-24 w-24 rounded-full bg-[#004ac6]"></div>
+                  <div className="absolute -left-1 -top-50 h-24 w-24 rounded-full bg-[#004ac6]"></div>
+                  <div className="absolute left-8 -top-50 h-24 w-24 rounded-full bg-[#004ac6]"></div>
+                  <div className="absolute left-8 -top-10 h-24 w-24 rounded-full bg-[#004ac6]"></div>
+                  <div className="absolute -left-8 -top-5 h-24 w-24 rounded-full bg-[#004ac6]"></div>
+                  <span className="relative block text-[10px] font-bold uppercase tracking-[0.18em] text-slate-200">Next OPD token</span>
                   <span className="relative font-headline-md text-2xl font-bold tracking-tight text-white">
                     {selectedDoctorId && availableDoctors.length > 0
                       ? `#${availableDoctors.find((d) => String(d.did) === String(selectedDoctorId))?.next_token ?? (totalToday + 101)}`
                       : '#000'}
                   </span>
-                  <span className="relative block text-[10px] font-semibold text-slate-400">per-doctor daily sequence</span>
+                  <span className="relative block text-[10px] font-semibold text-slate-200">per-doctor daily sequence</span>
                 </div>
               </div>
 
@@ -692,9 +623,6 @@ export default function ReceptionistDashboard() {
                 {/* SECTION 1: PATIENT DEMOGRAPHICS */}
                 <div className="space-y-5">
                   <h4 className="flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#e8efff] text-primary">
-                      <span className="material-symbols-outlined text-base">person</span>
-                    </span>
                     <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">1</span>
                     Patient demographic information
                     <span className="h-px flex-1 bg-slate-100"></span>
@@ -733,12 +661,13 @@ export default function ReceptionistDashboard() {
                       <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
                         Date of Birth
                       </label>
-                      <GlassDatePicker
+                      <input type="date"
                         required
                         value={dob}
                         onChange={handleDobChange}
                         placeholder="Select birth date"
                         ariaLabel="Date of Birth"
+                        className="w-full px-4 py-3 bg-slate-100/70 border border-slate-200 rounded-xl text-slate-800 text-sm font-semibold shadow-sm transition-all placeholder:font-normal placeholder:text-slate-400 hover:border-slate-300 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary focus:outline-none"
                       />
                     </div>
                     <div>
@@ -758,14 +687,15 @@ export default function ReceptionistDashboard() {
                       <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
                         Gender
                       </label>
-                      <GlassSelect
+                      <select
                         value={gender}
                         onChange={(e) => setGender(e.target.value)}
                         ariaLabel="Gender"
+                        className="w-full px-4 py-3 bg-slate-100/70 border border-slate-200 rounded-xl text-slate-800 text-sm font-semibold shadow-sm transition-all placeholder:font-normal placeholder:text-slate-400 hover:border-slate-300 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary focus:outline-none"
                       >
                         <option>Male</option>
                         <option>Female</option>
-                      </GlassSelect>
+                      </select>
                     </div>
                   </div>
 
@@ -802,9 +732,6 @@ export default function ReceptionistDashboard() {
                 {/* SECTION 2: OPD CONSULTATION & ROUTING */}
                 <div className="space-y-5 rounded-2xl border border-blue-100/70 bg-[#f8fbff] p-5 sm:p-6">
                   <h4 className="flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-white">
-                      <span className="material-symbols-outlined text-base">stethoscope</span>
-                    </span>
                     <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">2</span>
                     OPD consultation & doctor routing
                     <span className="h-px flex-1 bg-blue-100"></span>
@@ -815,10 +742,11 @@ export default function ReceptionistDashboard() {
                       <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
                         Select Symptom (Primary Medical Trigger)
                       </label>
-                      <GlassSelect
+                      <select
                         value={selectedSymptom}
                         onChange={handleSymptomChange}
                         ariaLabel="Select Symptom"
+                        className="w-full px-4 py-3 bg-slate-100/70 border border-slate-200 rounded-xl text-slate-800 text-sm font-semibold shadow-sm transition-all placeholder:font-normal placeholder:text-slate-400 hover:border-slate-300 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary focus:outline-none"
                       >
                         <option value="">Select Symptom</option>
                         {symptoms.map((sym) => (
@@ -826,7 +754,7 @@ export default function ReceptionistDashboard() {
                             {sym.symptom_name}
                           </option>
                         ))}
-                      </GlassSelect>
+                      </select>
                     </div>
 
                     <div>
@@ -859,10 +787,7 @@ export default function ReceptionistDashboard() {
                             disabled
                           >
                             {p === 'Emergency' && priority === p && (
-                              <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
-                                <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500 ring-2 ring-white"></span>
-                              </span>
+                              <span className="absolute -top-1 -right-1 flex h-3 w-3"> </span>
                             )}
                             {p}
                           </button>
@@ -893,10 +818,10 @@ export default function ReceptionistDashboard() {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 flex items-center justify-between">
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2 flex items-center justify-between">
                         <span>Assigned Doctor ({department || 'Select symptom first'})</span>
                         {selectedDoctorId && availableDoctors.length > 0 && (
-                          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                          <span className="text-[8px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                             Auto Assigned
                           </span>
                         )}

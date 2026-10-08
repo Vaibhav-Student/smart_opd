@@ -32,3 +32,386 @@
 .receptionist-dashboard-container ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* Calm dashboard surface */
+.receptionist-dashboard-container {
+  color: #334155;
+}
+
+.receptionist-dashboard-container > .grid:first-child {
+  gap: 1rem;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div {
+  min-height: 164px;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 1.25rem !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06) !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div > span.material-symbols-outlined {
+  color: #cbd5e1 !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(1) span.bg-gradient-to-br,
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(3) span.bg-gradient-to-br {
+  color: #5269c7 !important;
+  background: #eef1ff !important;
+  box-shadow: none !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(2) {
+  border-color: #f1dfdf !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(2) span.bg-gradient-to-br {
+  color: #b86f72 !important;
+  background: #fff1f1 !important;
+  box-shadow: none !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(4) {
+  color: #334155 !important;
+  background: #f5f7ff !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(4) .text-white,
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(4) .text-slate-300 {
+  color: #475569 !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(4) .text-slate-400 {
+  color: #64748b !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child h4 {
+  color: #1e293b !important;
+  background: none !important;
+  -webkit-text-fill-color: #1e293b !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(4) h4 {
+  color: #293653 !important;
+}
+
+.receptionist-dashboard-container > .grid:nth-child(2) > div > div,
+.receptionist-dashboard-container #patient-form,
+.receptionist-dashboard-container .lg\:sticky {
+  border-radius: 1.25rem !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+}
+
+.receptionist-dashboard-container #patient-form > div:first-child,
+.receptionist-dashboard-container .lg\:sticky > div:first-child {
+  background: #f8faff !important;
+  border-color: #e7ebf5 !important;
+}
+
+.receptionist-dashboard-container #patient-form > div:first-child h3,
+.receptionist-dashboard-container .lg\:sticky h4 {
+  color: #293653 !important;
+}
+
+.receptionist-dashboard-container #patient-form > div:first-child .bg-gradient-to-br {
+  color: #5269c7 !important;
+  background: #eef1ff !important;
+  box-shadow: none !important;
+}
+
+.receptionist-dashboard-container #patient-form > div:first-child > div:last-child {
+  color: #293653 !important;
+  background: #eef1ff !important;
+  box-shadow: none !important;
+}
+
+.receptionist-dashboard-container .lg\:sticky > div:first-child > div:first-child > span {
+  color: #5269c7 !important;
+  background: #eef1ff !important;
+  box-shadow: none !important;
+}
+
+.receptionist-dashboard-container .lg\:sticky > div:first-child > button:hover {
+  transform: none;
+}
+
+.receptionist-dashboard-container .lg\:sticky > div:nth-child(2) > div {
+  border-color: #e7ebf5 !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.receptionist-dashboard-container .lg\:sticky > div:nth-child(2) > div > div:first-child {
+  color: #5269c7 !important;
+  background: #eef1ff !important;
+  box-shadow: none !important;
+}
+
+.receptionist-dashboard-container .lg\:sticky > div:nth-child(2) > div > div:first-child span:not(.material-symbols-outlined) {
+  color: #5269c7 !important;
+  background: transparent !important;
+}
+
+.receptionist-dashboard-container .lg\:sticky > div:nth-child(2) > div:hover {
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06) !important;
+}
+
+@media (max-width: 640px) {
+  .receptionist-dashboard-container > .grid:first-child > div {
+    min-height: 145px;
+  }
+}
+
+/* Match the doctor panel's layout language and spacing. */
+.receptionist-dashboard-container {
+  font-family: var(--font-sans, 'Plus Jakarta Sans', 'Inter', sans-serif);
+}
+
+.receptionist-dashboard-container > .grid:first-child {
+  gap: 1.5rem;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div {
+  min-height: 0;
+  border-radius: 1rem !important;
+  padding: 1.5rem !important;
+  border-color: #e2e8f0 !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06) !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div > div:first-child {
+  margin-bottom: 1rem;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div > div:first-child > p,
+.receptionist-dashboard-container > .grid:first-child > div > p:first-of-type {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #94a3b8;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div h4 {
+  margin-top: 0 !important;
+  font-family: var(--font-sans, 'Plus Jakarta Sans', 'Inter', sans-serif);
+  font-size: 1.875rem !important;
+  font-weight: 800;
+  color: #0f172a !important;
+  background: none !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div > span.material-symbols-outlined,
+.receptionist-dashboard-container > .grid:first-child > div .pointer-events-none {
+  display: none;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div span.bg-gradient-to-br {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  color: #2563eb !important;
+  background: #eff6ff !important;
+  box-shadow: none !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(2) {
+  border-color: #e2e8f0 !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(2) span.bg-gradient-to-br {
+  color: #d97706 !important;
+  background: #fffbeb !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(3) span.bg-gradient-to-br {
+  color: #059669 !important;
+  background: #ecfdf5 !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(4) {
+  color: #0f172a !important;
+  background: #ffffff !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(4) .text-white,
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(4) .text-slate-300,
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(4) .text-slate-400 {
+  color: #64748b !important;
+}
+
+.receptionist-dashboard-container > .grid:nth-child(2) {
+  gap: 1.5rem;
+}
+
+.receptionist-dashboard-container > .grid:nth-child(2) > div > div,
+.receptionist-dashboard-container #patient-form,
+.receptionist-dashboard-container .lg\:sticky {
+  border-radius: 1rem !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+}
+
+.receptionist-dashboard-container #patient-form > div:first-child,
+.receptionist-dashboard-container .lg\:sticky > div:first-child {
+  padding: 1.5rem !important;
+  background: #ffffff !important;
+  border-color: #f1f5f9 !important;
+}
+
+.receptionist-dashboard-container #patient-form > div:first-child h3,
+.receptionist-dashboard-container .lg\:sticky h4 {
+  font-family: var(--font-sans, 'Plus Jakarta Sans', 'Inter', sans-serif);
+  color: #0f172a !important;
+}
+
+.receptionist-dashboard-container #patient-form > div:first-child > div:first-child .bg-gradient-to-br,
+.receptionist-dashboard-container .lg\:sticky > div:first-child > div:first-child > span {
+  color: #2563eb !important;
+  background: #eff6ff !important;
+  box-shadow: none !important;
+}
+
+.receptionist-dashboard-container #patient-form > div:first-child > div:last-child {
+  color: #0f172a !important;
+  background: #f8fafc !important;
+  box-shadow: none !important;
+}
+
+.receptionist-dashboard-container #patient-form > form {
+  padding: 1.5rem !important;
+}
+
+.receptionist-dashboard-container #patient-form form input,
+.receptionist-dashboard-container #patient-form form select,
+.receptionist-dashboard-container #patient-form form textarea {
+  border-color: #e2e8f0 !important;
+  border-radius: 0.75rem !important;
+  background: #f8fafc !important;
+  box-shadow: none !important;
+}
+
+.receptionist-dashboard-container #patient-form form input:focus,
+.receptionist-dashboard-container #patient-form form select:focus,
+.receptionist-dashboard-container #patient-form form textarea:focus {
+  background: #ffffff !important;
+  border-color: #93c5fd !important;
+  box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.2) !important;
+}
+
+.receptionist-dashboard-container .lg\:sticky > div:first-child > button {
+  border-color: #e2e8f0;
+}
+
+.receptionist-dashboard-container .lg\:sticky > div:nth-child(2) {
+  padding: 1rem !important;
+}
+
+.receptionist-dashboard-container .lg\:sticky > div:nth-child(2) > div {
+  border-color: #f1f5f9 !important;
+  border-radius: 0.875rem !important;
+  box-shadow: none !important;
+}
+
+.receptionist-dashboard-container .lg\:sticky > div:nth-child(2) > div > div:first-child {
+  color: #2563eb !important;
+  background: #eff6ff !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 640px) {
+  .receptionist-dashboard-container > .grid:first-child {
+    gap: 1rem;
+  }
+
+  .receptionist-dashboard-container > .grid:first-child > div {
+    padding: 1.25rem !important;
+  }
+
+  .receptionist-dashboard-container #patient-form > div:first-child,
+  .receptionist-dashboard-container #patient-form > form {
+    padding: 1.25rem !important;
+  }
+}
+
+/* Final doctor-panel alignment for the dashboard surfaces. */
+.receptionist-dashboard-container > .grid:first-child > div,
+.receptionist-dashboard-container #patient-form,
+.receptionist-dashboard-container .lg\:sticky {
+  border-radius: 1rem !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div {
+  min-height: 0 !important;
+  overflow: hidden;
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div > .pointer-events-none,
+.receptionist-dashboard-container > .grid:first-child > div > span.material-symbols-outlined {
+  display: none !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div > div.relative {
+  position: static;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div > div.relative > p:first-child {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #94a3b8;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div h4 {
+  margin-top: 0 !important;
+  font-size: 1.875rem !important;
+  line-height: 1.25 !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  background: none !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(1) > p:last-child,
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(2) > p:last-of-type,
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(2) > div:last-child,
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(3) > p,
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(4) > div:last-child {
+  display: none !important;
+}
+
+.receptionist-dashboard-container > .grid:first-child > div:nth-child(4) > h4 {
+  font-size: 1.25rem !important;
+}
+
+.receptionist-dashboard-container #patient-form:hover,
+.receptionist-dashboard-container .lg\:sticky:hover {
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06) !important;
+}
+
+.receptionist-dashboard-container #patient-form > div:first-child > .next-opd-token {
+  background: #4338ca;
+  color: #ffffff !important;
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3) !important;
+}

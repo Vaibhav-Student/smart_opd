@@ -24,7 +24,7 @@ function AddDoctor() {
     avg_time: "",
     username: "",
     password: "",
-    status: "Active",
+    status: "active",
   });
 
   const specializations = [
@@ -64,7 +64,7 @@ function AddDoctor() {
       dob: "",
       gender: "",
       email: "",
-      phone: "",
+      contact: "",
       specialization: "",
       avg_time: "",
       username: "",
@@ -468,7 +468,7 @@ function AddDoctor() {
             </div>
 
             {/* --- Action Buttons --- */}
-            <div className="form-actions-stack">
+            <div className="form-actions-stack pb-8">
               <button type="submit" className="btn-save">
                 <span className="material-symbols-outlined">save</span>
                 <span>Save Doctor Profile</span>

@@ -156,7 +156,7 @@ export default function ReceptionistPatients() {
           <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center justify-between">
             <div>
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">TOTAL REGISTERED</p>
-              <h4 className="text-3xl font-black font-bold text-slate-900">{patients.length}</h4>
+              <h4 className="text-3xl font-black font-semibold text-slate-900">{patients.length}</h4>
             </div>
             <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
               <span className="material-symbols-outlined text-2xl">groups</span>

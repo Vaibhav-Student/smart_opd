@@ -51,10 +51,38 @@ function AdminSidebar({ isCollapsed }) {
     <aside className={`sidebar ${isCollapsed ? 'sidebar--collapsed' : ''}`}>
       {/* Logo */}
       <div className="sidebar__logo">
-        <div className="sidebar__logo-icon">
-          <span className="material-symbols-outlined">admin_panel_settings</span>
+        <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
+          <div className="absolute inset-0 bg-blue-600/25 rounded-xl blur-sm group-hover:bg-blue-600/40 transition-all"></div>
+          <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 via-blue-600 to-cyan-500 p-[1.5px] shadow-md group-hover:scale-105 transition-all">
+            <div className="w-full h-full bg-slate-900 rounded-[10.5px] flex items-center justify-center overflow-hidden">
+              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 2L4 6v5c0 5.25 3.4 10.15 8 11.5 4.6-1.35 8-6.25 8-11.5V6l-8-4z"
+                  fill="#0284c7"
+                  fillOpacity="0.25"
+                  stroke="#38bdf8"
+                  strokeWidth="1.5"
+                />
+                <path d="M12 7v10M7 12h10" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" />
+                <path
+                  d="M9 12l2 2.2 4-4.2"
+                  stroke="#38bdf8"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
         </div>
-        {!isCollapsed && <span className="sidebar__logo-text">MediQ</span>}
+        {!isCollapsed && <div className="flex flex-col">
+          <span className="font-bold text-xl text-slate-900 tracking-tight leading-none">
+            Medi<span className="text-blue-600">Q</span>
+          </span>
+          <span className="text-[9px] font-bold tracking-widest text-blue-600 uppercase mt-0.5">
+            Admin Portal
+          </span>
+        </div>}
       </div>
 
       {/* Navigation */}
@@ -88,7 +116,7 @@ function AdminSidebar({ isCollapsed }) {
           className="sidebar__user"
           onClick={() => navigate('/admin/profile')}
           style={{ cursor: 'pointer' }}
-          title={isCollapsed ? "Alex Miller (Admin Profile)" : "Admin Profile"}
+          title={isCollapsed ? "(Admin Profile)" : "Admin Profile"}
         >
           <div className="sidebar__user-avatar">
             <span className="material-symbols-outlined">person</span>

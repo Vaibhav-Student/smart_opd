@@ -7,10 +7,9 @@ import { useNavigate } from 'react-router-dom';
 import AdminLayout from '../../components/admin/AdminLayout';
 import GlassSelect from '../../components/controls/GlassSelect';
 import GlassDatePicker from '../../components/controls/GlassDatePicker';
+import { getAuthHeaders } from '../../auth';
 import '../../style/admin/AddReceptionist.css';
 // import '../../style/admin/AddDoctor.css';
-
-
 
 
 function AddReceptionist() {
@@ -63,33 +62,40 @@ function AddReceptionist() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:8000/receptionist", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(formData)
-    })
+    try {
+      const response = await fetch("http://localhost:8000/receptionist", {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(formData)
+      });
 
-    const data = await response.json();
-    console.log(data);
+      const data = await response.json().catch(() => ({}));
+      console.log(data);
 
-    if (data.email_sent === true) {
+      if (!response.ok) {
+        const detail = Array.isArray(data.detail)
+          ? data.detail.map((item) => item.msg).join("\n")
+          : data.detail || data.message || "Failed to add receptionist.";
+        alert(detail);
+        return;
+      }
 
-      alert(
-        "Receptionist added successfully.\n\n" +
-        "Login credentials have been sent to the receptionist's email."
-      );
+      if (data.email_sent === true) {
+        alert(
+          "Receptionist added successfully.\n\n" +
+          "Login credentials have been sent to the receptionist's email."
+        );
+      } else {
+        alert(
+          "Receptionist added successfully.\n\n" +
+          "However, the credential email could not be sent."
+        );
+      }
 
-      navigate("/admin/add-receptionist");
-
-    } else {
-
-      alert(
-        "Receptionist added successfully.\n\n" +
-        "However, the credential email could not be sent."
-      );
-
+      navigate("/admin/receptionists");
+    } catch (error) {
+      console.error("Error adding receptionist:", error);
+      alert(error.message || "Unable to connect to the backend. Please ensure the API server is running.");
     }
   };
 

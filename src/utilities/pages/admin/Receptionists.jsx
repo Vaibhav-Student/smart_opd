@@ -41,11 +41,12 @@ function formatDateTime(value) {
 function formatStatus(status) {
   if (!status) return 'Unknown';
 
-  return String(status).charAt(0).toUpperCase() + String(status).slice(1).toLowerCase();
+  const normalizedStatus = String(status).trim();
+  return normalizedStatus.charAt(0).toUpperCase() + normalizedStatus.slice(1).toLowerCase();
 }
 
 function getStatusClass(status) {
-  const normalizedStatus = String(status || '').toLowerCase();
+  const normalizedStatus = String(status || '').trim().toLowerCase();
 
   switch (normalizedStatus) {
     case 'active':
@@ -111,11 +112,11 @@ function Receptionists() {
   }, [receptionist, searchTerm, selectedShift]);
 
   const totalReceptionists = receptionist.length;
-  const activeReceptionists = receptionist.filter((rec) => String(rec.status || '').toLowerCase() === 'active').length;
+  const activeReceptionists = receptionist.filter((rec) => String(rec.status || '').trim().toLowerCase() === 'active').length;
   const morningShiftReceptionists = receptionist.filter((rec) => String(rec.shift || '').toLowerCase() === 'morning').length;
 
   const handleStatusToggle = async (id, currentStatus) => {
-    const normalizedCurrent = String(currentStatus || "").toLowerCase();
+    const normalizedCurrent = String(currentStatus || "").trim().toLowerCase();
     const newStatus = normalizedCurrent === "active" ? "inactive" : "active";
 
     setRecetionist(prev =>
@@ -412,11 +413,15 @@ function Receptionists() {
                             <span className="receptionists-status-pill__dot" />
                             {formatStatus(rec.status)}
                           </span>
-                          <label className="receptionists-switch" title={`Set ${rec.name} ${String(rec.status).toLowerCase() === 'active' ? 'inactive' : 'active'}`}>
+                          <label
+                            className="receptionists-switch"
+                            title={`Set ${rec.name} ${String(rec.status || '').trim().toLowerCase() === 'active' ? 'inactive' : 'active'}`}
+                          >
                             <input
                               type="checkbox"
-                              checked={String(rec.status || "").toLowerCase() === "active"}
+                              checked={String(rec.status || "").trim().toLowerCase() === "active"}
                               onChange={() => handleStatusToggle(rec.rid, rec.status)}
+                              aria-label={`Set ${rec.name} ${String(rec.status || '').trim().toLowerCase() === 'active' ? 'inactive' : 'active'}`}
                             />
                             <span className="receptionists-switch__slider" />
                           </label>

@@ -53,7 +53,7 @@ export default function ReceptionistTokens() {
       <div className="space-y-6 animate-fadeIn">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-black text-slate-900">Queue Tokens</h1>
+            <h1 className="text-3xl font-bold font-black text-slate-900">Queue Tokens</h1>
             <p className="mt-1 text-sm text-slate-500">
               Print tokens only for patients currently in the queue.
             </p>
@@ -79,7 +79,7 @@ export default function ReceptionistTokens() {
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
           <div className="mb-5 flex items-center justify-between border-b border-slate-100 pb-4">
             <div>
-              <h2 className="text-xl font-black text-slate-900">Active Queue Tokens</h2>
+              <h2 className="text-xl font-bold font-black text-slate-900">Active Queue Tokens</h2>
               <p className="mt-1 text-xs font-medium text-slate-400">{tokens.length} patient{tokens.length === 1 ? "" : "s"} currently in queue</p>
             </div>
             <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">Live</span>

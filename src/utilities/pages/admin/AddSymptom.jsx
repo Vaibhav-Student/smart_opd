@@ -84,7 +84,6 @@ export default function AddSymptom() {
 
   const isEmerg = formData.priority === 'Emergency';
   const isHigh = formData.priority === 'High';
-  const isMed = formData.priority === 'Medium';
 
   return (
     <AdminLayout>
@@ -144,7 +143,7 @@ export default function AddSymptom() {
                 </div>
 
                 {/* Department / Specialization Dropdown */}
-                <div className="form-input-group form-col-full">
+                <div className="form-input-group form-col-full w-full pt-8">
                   <label className="form-input-group__label">
                     Specialization <span className="required-star">*</span>
                   </label>
@@ -154,6 +153,7 @@ export default function AddSymptom() {
                     onChange={handleChange}
                     required
                     ariaLabel="Specialization"
+                    className="form-input-group__controltext-sm font-bold"
                   >
                     <option value="General Medicine">General Medicine</option>
                     <option value="Cardiology">Cardiology</option>
@@ -161,7 +161,7 @@ export default function AddSymptom() {
                     <option value="Neurology">Neurology</option>
                     <option value="Pediatrics">Pediatrics</option>
                   </GlassSelect>
-                  <span className="material-symbols-outlined form-input-group__icon">medical_services</span>
+                  {/* <span className="material-symbols-outlined form-input-group__icon">medical_services</span> */}
                 </div>
               </div>
             </div>

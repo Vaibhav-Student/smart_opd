@@ -10,6 +10,11 @@ def validate_doctor(doc, db) :
 
 
 def add_doctor(doc, db) :
+    if db.query(Doctor).filter(Doctor.username == doc.username).first():
+        return {"message": "A doctor with this username already exists.", "email_sent": False}
+    if db.query(Doctor).filter(Doctor.contact == doc.contact).first():
+        return {"message": "A doctor with this contact number already exists.", "email_sent": False}
+
     newDoc = Doctor(
         name = doc.name,
         dob = doc.dob,
@@ -20,7 +25,7 @@ def add_doctor(doc, db) :
         avg_time = doc.avg_time,
         username = doc.username,
         password = doc.password,
-        status = doc.status,
+        status = doc.status or "active",
     )
     
     db.add(newDoc)

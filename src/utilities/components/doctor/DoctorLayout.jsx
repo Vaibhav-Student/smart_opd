@@ -17,7 +17,6 @@ export default function DoctorLayout({ children, activeTab = 'Overview' }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [addModalOpen, setAddModalOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Settings State
   const [roomNumber, setRoomNumber] = useState('Room 402B');
@@ -91,45 +90,21 @@ export default function DoctorLayout({ children, activeTab = 'Overview' }) {
     logout(navigate);
   };
 
-  /* ---------- Shared visual tokens (styling only) ---------- */
-  const overlayClass = 'fixed inset-0 z-[150] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm animate-fadeIn';
-  const panelClass = 'relative w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 sm:p-7 shadow-2xl';
-  const closeClass = 'absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 outline-none transition-colors duration-150 hover:bg-slate-100 hover:text-slate-700 focus-visible:ring-2 focus-visible:ring-blue-600';
-  const labelClass = 'mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500';
-  const inputClass = 'w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5 text-sm font-medium text-slate-800 outline-none transition-all duration-150 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100';
-  const secondaryBtnClass = 'inline-flex h-10 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition-colors duration-150 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2';
-  const primaryBtnClass = 'inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white shadow-sm shadow-blue-500/20 transition-all duration-150 hover:bg-blue-700 hover:shadow-md hover:shadow-blue-500/25 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2';
-  const toggleClass = (on) =>
-    `relative inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 ${on ? 'bg-blue-600' : 'bg-slate-300'}`;
-  const knobClass = (on) =>
-    `inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-150 ${on ? 'translate-x-5' : 'translate-x-0'}`;
-
   return (
-    <div className="flex min-h-screen flex-col md:flex-row bg-slate-50 font-sans text-slate-800 antialiased">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-800 flex font-sans">
       {/* Toast Alert */}
       {toastMessage && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="fixed right-4 top-4 z-[200] flex max-w-[calc(100vw-2rem)] items-center gap-3 rounded-2xl border border-slate-700 bg-slate-900/95 px-4 py-3 text-white shadow-xl backdrop-blur-md sm:right-6 sm:top-6"
-        >
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-500/20 text-blue-400">
-            <span className="material-symbols-outlined text-[18px] leading-none">notifications_active</span>
-          </span>
-          <span className="text-sm font-medium">{toastMessage}</span>
+        <div className="fixed top-6 right-6 z-[200] bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-700 animate-bounce">
+          <span className="material-symbols-outlined text-blue-400 text-2xl">campaign</span>
+          <span className="text-sm font-semibold">{toastMessage}</span>
         </div>
       )}
 
-      {/* Doctor Sidebar (Desktop + Mobile Drawer) */}
-      <DoctorSidebar
-        activeTab={activeTab}
-        showToast={showToast}
-        isMobileOpen={mobileMenuOpen}
-        onCloseMobile={() => setMobileMenuOpen(false)}
-      />
+      {/* Doctor Sidebar */}
+      <DoctorSidebar activeTab={activeTab} showToast={showToast} />
 
       {/* Main Content Area */}
-      <div className="flex flex-1 flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Doctor Header */}
         <DoctorHeader
           docName={doctor.name}
@@ -137,237 +112,154 @@ export default function DoctorLayout({ children, activeTab = 'Overview' }) {
           roomNumber={roomNumber}
           onOpenSettings={() => setSettingsOpen(true)}
           onOpenProfile={() => setProfileOpen(true)}
-          onToggleMobileMenu={() => setMobileMenuOpen(prev => !prev)}
         />
-
-        {/* SETTINGS MODAL */}
-        {settingsOpen && (
-          <div className={overlayClass}>
-            <div className={panelClass} role="dialog" aria-modal="true" aria-labelledby="cabin-settings-title">
-              <button type="button" onClick={() => setSettingsOpen(false)} aria-label="Close settings" className={closeClass}>
-                <span className="material-symbols-outlined text-[20px] leading-none">close</span>
-              </button>
-
-              <div className="mb-5 flex items-center gap-3.5">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 ring-1 ring-blue-100">
-                  <span className="material-symbols-outlined text-[24px] leading-none">settings</span>
-                </span>
-                <div>
-                  <h3 id="cabin-settings-title" className="text-lg font-bold text-slate-900">Cabin Settings</h3>
-                  <p className="mt-0.5 text-xs text-slate-500">Configure consultation room and calling alert preferences</p>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="room-number" className={labelClass}>Consultation Room Number</label>
-                  <input
-                    id="room-number"
-                    type="text"
-                    value={roomNumber}
-                    onChange={(e) => setRoomNumber(e.target.value)}
-                    className={inputClass}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between gap-4 rounded-xl border border-slate-200/90 bg-slate-50/70 p-3.5 transition-colors hover:bg-slate-50">
-                  <div className="min-w-0">
-                    <span className="block text-sm font-semibold text-slate-800">Auto-Advance Next Patient</span>
-                    <span className="mt-0.5 block text-xs text-slate-500">Automatically call next patient when completing consultation</span>
-                  </div>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={autoNext}
-                    aria-label="Auto-Advance Next Patient"
-                    onClick={() => setAutoNext(!autoNext)}
-                    className={toggleClass(autoNext)}
-                  >
-                    <span className={knobClass(autoNext)}></span>
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between gap-4 rounded-xl border border-slate-200/90 bg-slate-50/70 p-3.5 transition-colors hover:bg-slate-50">
-                  <div className="min-w-0">
-                    <span className="block text-sm font-semibold text-slate-800">Voice Queue Announcement</span>
-                    <span className="mt-0.5 block text-xs text-slate-500">Chime speaker in waiting lounge when calling next token</span>
-                  </div>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={audioChime}
-                    aria-label="Voice Queue Announcement"
-                    onClick={() => setAudioChime(!audioChime)}
-                    className={toggleClass(audioChime)}
-                  >
-                    <span className={knobClass(audioChime)}></span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="mt-6 flex justify-end gap-3 border-t border-slate-100 pt-4">
-                <button type="button" onClick={() => setSettingsOpen(false)} className={secondaryBtnClass}>
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSettingsOpen(false);
-                    showToast('Cabin settings updated!');
-                  }}
-                  className={primaryBtnClass}
-                >
-                  Save Settings
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* PROFILE MODAL */}
         {profileOpen && (
-          <div className={overlayClass}>
-            <div className={panelClass} role="dialog" aria-modal="true" aria-labelledby="profile-title">
-              <button type="button" onClick={() => setProfileOpen(false)} aria-label="Close profile" className={closeClass}>
-                <span className="material-symbols-outlined text-[20px] leading-none">close</span>
+          <div
+            className="profile-overlay fixed inset-0 z-[150] flex items-center justify-center p-4 animate-fade-in"
+            role="presentation"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) setProfileOpen(false);
+            }}
+          >
+            <div
+              className="profile-modal bg-white rounded-[28px] max-w-2xl w-full shadow-2xl border border-slate-200 relative transition-all"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="doctor-profile-modal-title"
+            >
+              <button
+                type="button"
+                onClick={() => setProfileOpen(false)}
+                className="absolute top-5 right-5 z-10 text-slate-400 hover:text-slate-700 p-2 rounded-full hover:bg-white/80 transition-colors"
+                aria-label="Close doctor profile"
+              >
+                <span className="material-symbols-outlined">close</span>
               </button>
-
-              <div className="mb-5 flex items-center gap-4 border-b border-slate-100 pb-5">
-                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-lg font-bold text-white shadow-md shadow-blue-500/20">
+              <div className="profile-modal-header flex items-center gap-4 px-6 py-6 sm:px-8">
+                <div className="w-14 h-14 rounded-2xl bg-white text-blue-700 font-black text-lg flex items-center justify-center border border-blue-100 shadow-sm">
                   {doctor.name.split(" ")[0]?.charAt(0) || ""}
                   {doctor.name.split(" ")[1]?.charAt(0) || ""}
-                </span>
-                <div className="min-w-0">
-                  <h3 id="profile-title" className="truncate text-lg font-bold text-slate-900">{doctor.name}</h3>
-                  <div className="mt-1 flex flex-wrap items-center gap-1.5">
-                    <span className="rounded-lg bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700 ring-1 ring-inset ring-blue-100">
-                      @{doctor.username || 'doctor'}
-                    </span>
-                    <span className="rounded-lg bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-100">
-                      Status: {doctor.status || 'Active'}
-                    </span>
-                  </div>
+                </div>
+                <div>
+                  <h3 id="doctor-profile-modal-title" className="text-xl font-bold text-slate-900">{doctor.name}</h3>
+                  <p className="text-xs font-medium text-slate-500 mt-1">{doctor.specialization} profile</p>
+                  <span className="inline-flex items-center gap-1.5 mt-2 text-[11px] font-semibold text-emerald-700">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    {doctor.status || 'Active'}
+                  </span>
                 </div>
               </div>
-
-              <div className="max-h-[60vh] space-y-4 overflow-y-auto pr-1">
+              <div className="profile-modal-body px-6 pb-2 sm:px-8 max-h-[58vh] overflow-y-auto">
                 <div>
-                  <label htmlFor="doc-name" className={labelClass}>Doctor Name</label>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1.5">Full name</label>
                   <input
-                    id="doc-name"
                     type="text"
                     value={doctor.name}
                     onChange={(e) => setDoctor({ ...doctor, name: e.target.value })}
-                    className={inputClass}
+                    className="profile-input w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className={labelClass}>Date Of Birth</label>
-                  <GlassDatePicker
+                  <label className="block text-xs font-semibold text-slate-600 mb-1.5">Date of birth</label>
+                  <input
+                    type="date"
                     value={doctor.dob}
                     onChange={(e) => setDoctor({ ...doctor, dob: e.target.value })}
-                    placeholder="Select date of birth"
-                    ariaLabel="Date Of Birth"
+                    className="profile-input w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
-                <fieldset>
-                  <legend className={labelClass}>Gender</legend>
-                  <div className="flex gap-2">
-                    {['Male', 'Female'].map((option) => (
-                      <label
-                        key={option}
-                        className={[
-                          'flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold outline-none transition-all duration-150',
-                          'focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2',
-                          doctor.gender === option
-                            ? 'border-blue-500 bg-blue-50/90 text-blue-700 shadow-sm'
-                            : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50',
-                        ].join(' ')}
-                      >
-                        <input
-                          type="radio"
-                          name="gender"
-                          value={option}
-                          checked={doctor.gender === option}
-                          onChange={(e) => setDoctor({ ...doctor, gender: e.target.value })}
-                          className="h-3.5 w-3.5 accent-blue-600"
-                        />
-                        {option}
-                      </label>
-                    ))}
-                  </div>
-                </fieldset>
                 <div>
-                  <label htmlFor="doc-specialization" className={labelClass}>Specialization</label>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1.5">Gender</label>
+
+                  <div className="flex gap-5 text-xs font-medium text-slate-600">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="Male"
+                        checked={doctor.gender === "Male"}
+                        onChange={(e) => setDoctor({ ...doctor, gender: e.target.value })}
+                      />
+                      Male
+                    </label>
+
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="Female"
+                        checked={doctor.gender === "Female"}
+                        onChange={(e) => setDoctor({ ...doctor, gender: e.target.value })}
+                      />
+                      Female
+                    </label>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1.5">Specialization</label>
                   <input
-                    id="doc-specialization"
                     type="text"
                     value={doctor.specialization}
                     onChange={(e) => setDoctor({ ...doctor, specialization: e.target.value })}
-                    className={inputClass}
+                    className="profile-input w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label htmlFor="doc-email" className={labelClass}>Email Address</label>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1.5">Email address</label>
                   <input
-                    id="doc-email"
                     type="email"
                     value={doctor.email}
                     onChange={(e) => setDoctor({ ...doctor, email: e.target.value })}
-                    className={inputClass}
+                    className="profile-input w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label htmlFor="doc-contact" className={labelClass}>Contact Number</label>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1.5">Contact number</label>
                   <input
-                    id="doc-contact"
                     type="tel"
                     value={doctor.contact}
                     onChange={(e) => setDoctor({ ...doctor, contact: e.target.value })}
-                    className={inputClass}
+                    className="profile-input w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label htmlFor="doc-avg-time" className={labelClass}>Avg Consultation Time (mins)</label>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1.5">Average consultation time</label>
                   <input
-                    id="doc-avg-time"
                     type="number"
                     value={doctor.avg_time}
                     onChange={(e) => setDoctor({ ...doctor, avg_time: e.target.value })}
-                    className={inputClass}
+                    className="profile-input w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label htmlFor="doc-username" className={labelClass}>Username</label>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1.5">Username</label>
                   <input
-                    id="doc-username"
                     type="text"
                     value={doctor.username}
                     onChange={(e) => setDoctor({ ...doctor, username: e.target.value })}
-                    className={inputClass}
+                    className="profile-input w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label htmlFor="doc-password" className={labelClass}>Password</label>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1.5">Password</label>
                   <input
-                    id="doc-password"
                     type="password"
-                    value={doctor.password || ''}
-                    placeholder="Enter new password to change"
+                    placeholder={doctor.password || ''}
                     onChange={(e) => setDoctor({ ...doctor, password: e.target.value })}
-                    className={inputClass}
+                    className="profile-input w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
               </div>
-
-              <div className="mt-6 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
+              <div className="mt-5 px-6 py-4 sm:px-8 border-t border-slate-100 flex items-center justify-between bg-slate-50/60 rounded-b-[28px]">
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl px-3 text-sm font-semibold text-red-600 outline-none transition-colors duration-150 hover:bg-red-50 hover:text-red-700 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
+                  className="text-xs font-bold text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-2 rounded-xl transition-colors flex items-center gap-1"
                 >
-                  <span className="material-symbols-outlined text-[18px] leading-none">logout</span>
-                  Sign Out
+                  <span className="material-symbols-outlined text-base">logout</span>
+                  Logout
                 </button>
                 <button
                   type="button"
@@ -376,9 +268,9 @@ export default function DoctorLayout({ children, activeTab = 'Overview' }) {
                     showToast('Doctor Profile Updated!');
                     saveProfile();
                   }}
-                  className={primaryBtnClass}
+                  className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5"
                 >
-                  <span className="material-symbols-outlined text-[18px] leading-none">check</span>
+                  <span className="material-symbols-outlined text-sm">check</span>
                   Save Profile
                 </button>
               </div>
@@ -388,21 +280,16 @@ export default function DoctorLayout({ children, activeTab = 'Overview' }) {
 
         {/* ADD DIRECT PATIENT MODAL */}
         {addModalOpen && (
-          <div className={overlayClass}>
-            <div className={panelClass} role="dialog" aria-modal="true" aria-labelledby="add-patient-title">
-              <button type="button" onClick={() => setAddModalOpen(false)} aria-label="Close" className={closeClass}>
-                <span className="material-symbols-outlined text-[20px] leading-none">close</span>
+          <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+            <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 relative transition-all">
+              <button
+                onClick={() => setAddModalOpen(false)}
+                className="absolute top-6 right-6 text-slate-400 hover:text-slate-700 p-2 rounded-full hover:bg-slate-100 transition-colors"
+              >
+                <span className="material-symbols-outlined">close</span>
               </button>
-
-              <div className="mb-5 flex items-center gap-3.5">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 ring-1 ring-blue-100">
-                  <span className="material-symbols-outlined text-[24px] leading-none">person_add</span>
-                </span>
-                <div>
-                  <h3 id="add-patient-title" className="text-lg font-bold text-slate-900">Add Patient to Queue</h3>
-                  <p className="mt-0.5 text-xs text-slate-500">Directly insert patient into today's consultation queue</p>
-                </div>
-              </div>
+              <h3 className="text-2xl font-black text-slate-900 mb-1">Add Patient to Queue</h3>
+              <p className="text-xs text-slate-500 mb-6">Directly insert patient into today's consultation queue</p>
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -414,36 +301,40 @@ export default function DoctorLayout({ children, activeTab = 'Overview' }) {
                 className="space-y-4"
               >
                 <div>
-                  <label htmlFor="new-patient-name" className={labelClass}>Patient Name</label>
+                  <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Patient Name</label>
                   <input
-                    id="new-patient-name"
                     required
                     type="text"
                     value={newPatientName}
                     onChange={(e) => setNewPatientName(e.target.value)}
                     placeholder="e.g. Vikramaditya Shah"
-                    className={inputClass}
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label htmlFor="new-patient-reason" className={labelClass}>Chief Complaint / Reason</label>
+                  <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Chief Complaint / Reason</label>
                   <input
-                    id="new-patient-reason"
                     required
                     type="text"
                     value={newPatientReason}
                     onChange={(e) => setNewPatientReason(e.target.value)}
                     placeholder="e.g. Sudden Palpitations"
-                    className={inputClass}
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
-
-                <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
-                  <button type="button" onClick={() => setAddModalOpen(false)} className={secondaryBtnClass}>
+                <div className="pt-4 flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setAddModalOpen(false)}
+                    className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl"
+                  >
                     Cancel
                   </button>
-                  <button type="submit" className={primaryBtnClass}>
-                    <span className="material-symbols-outlined text-[18px] leading-none">person_add</span>
+                  <button
+                    type="submit"
+                    className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-1.5"
+                  >
+                    <span className="material-symbols-outlined text-base">person_add</span>
                     Add to Queue
                   </button>
                 </div>
@@ -453,38 +344,26 @@ export default function DoctorLayout({ children, activeTab = 'Overview' }) {
         )}
 
         {/* Page Container */}
-        <main className="mx-auto w-full max-w-[1400px] flex-1 animate-fadeIn px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <main className="p-8 space-y-6 flex-1 max-w-7xl mx-auto w-full">
           {children}
         </main>
 
         {/* Footer */}
-        <footer className="mt-auto border-t border-slate-200/80 bg-white">
-          <div className="mx-auto flex max-w-[1400px] flex-col items-center justify-between gap-3 px-4 py-4 text-xs text-slate-500 md:flex-row sm:px-6 lg:px-8">
-            <p className="flex flex-wrap items-center gap-x-2">
-              <span className="font-bold text-slate-900">MediQueue</span>
-              <span className="text-slate-300">•</span>
+        <footer className="bg-white border-t border-slate-200 py-6 px-8 mt-auto">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-medium">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-slate-900">MediQ</span>
               <span>© 2026 Smart OPD Healthcare Solutions. All rights reserved.</span>
-            </p>
-            <nav aria-label="Footer" className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
-              <a href="#privacy" className="rounded outline-none transition-colors duration-150 hover:text-blue-600 focus-visible:ring-2 focus-visible:ring-blue-600">Privacy Policy</a>
-              <a href="#terms" className="rounded outline-none transition-colors duration-150 hover:text-blue-600 focus-visible:ring-2 focus-visible:ring-blue-600">Terms of Service</a>
-              <a href="#support" className="rounded outline-none transition-colors duration-150 hover:text-blue-600 focus-visible:ring-2 focus-visible:ring-blue-600">Support</a>
-              <a href="#contact" className="rounded outline-none transition-colors duration-150 hover:text-blue-600 focus-visible:ring-2 focus-visible:ring-blue-600">Contact Us</a>
-            </nav>
+            </div>
+            <div className="flex items-center gap-6">
+              <a href="#privacy" className="hover:text-blue-600 transition-colors">Privacy Policy</a>
+              <a href="#terms" className="hover:text-blue-600 transition-colors">Terms of Service</a>
+              <a href="#support" className="hover:text-blue-600 transition-colors">Support</a>
+              <a href="#contact" className="hover:text-blue-600 transition-colors">Contact Us</a>
+            </div>
           </div>
         </footer>
       </div>
-
-      {/* Floating Action Button */}
-      <button
-        type="button"
-        onClick={() => setAddModalOpen(true)}
-        title="Directly Add Patient to Queue"
-        aria-label="Directly Add Patient to Queue"
-        className="fixed bottom-6 right-6 z-40 inline-flex h-13 w-13 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 transition-all duration-200 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/40 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 sm:bottom-8 sm:right-8"
-      >
-        <span className="material-symbols-outlined text-[26px] leading-none">add</span>
-      </button>
     </div>
   );
 }

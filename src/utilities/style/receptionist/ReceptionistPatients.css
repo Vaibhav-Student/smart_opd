@@ -4,6 +4,7 @@
 
 .receptionist-patients-container {
   width: 100%;
+  font-family: var(--font-sans, 'Plus Jakarta Sans', 'Inter', sans-serif);
 }
 
 .patient-table-row {
@@ -41,7 +42,7 @@
     color: #000000 !important;
     margin: 0 !important;
     padding: 0 !important;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', 'Inter', sans-serif) !important;
   }
 
   .opd-print-header {

@@ -101,20 +101,12 @@ export default function DoctorAppointments() {
 
   return (
     <DoctorLayout activeTab="Appointments">
-      <div className="doctor-appointments-container animate-fadeIn overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm">
-        {/* ---------- Section header ---------- */}
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 px-6 py-4">
-          <div className="min-w-0">
-            <h2 className="text-base font-bold text-slate-900">Today's Appointment Schedule</h2>
-            <p className="mt-0.5 text-xs text-slate-500">
-              Ordered by active queue priority <span className="px-1 text-slate-300">•</span> Auto-syncs with live queue
-            </p>
-          </div>
-          <div className="flex shrink-0 items-center gap-2">
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700">
-              {appointments.length} Active
-            </span>
-            <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700 ring-1 ring-inset ring-emerald-200">
+      <div className="doctor-appointments-container bg-white rounded-3xl p-8 border border-slate-200 shadow-sm space-y-6 animate-fadeIn">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+          <h3 className="text-2xl font-bold text-slate-900">Today's Appointment Schedule</h3>
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold text-slate-500">{appointments.length} Active</span>
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
               {completedCount} Completed
             </span>
           </div>
@@ -140,72 +132,43 @@ export default function DoctorAppointments() {
           </div>
         )}
 
-        {/* ---------- Schedule List ---------- */}
-        <div className="p-6">
-          {appointments.length === 0 ? (
-            <div className="px-6 py-16 text-center">
-              <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-300 ring-1 ring-slate-100">
-                <span className="material-symbols-outlined text-[28px] leading-none">calendar_month</span>
-              </span>
-              <p className="mt-4 text-base font-bold text-slate-800">No appointments scheduled for today</p>
-              <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto">Patients will appear here once registered and checked in at the reception desk</p>
-            </div>
-          ) : (
-            <ul className="divide-y divide-slate-100">
-              {appointments.map((item) => (
-                <li
-                  key={item.qid}
-                  className="appointment-item-card flex flex-wrap items-center justify-between gap-4 py-4 px-3 rounded-xl transition-all duration-150 hover:bg-slate-50/80"
-                >
-                  <div className="flex min-w-0 items-center gap-4">
-                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-xs font-bold text-slate-600 shadow-sm">
-                      {getInitials(item.patient_name)}
+        {appointments.length === 0 ? (
+          <div className="text-center py-16">
+            <span className="material-symbols-outlined text-5xl text-slate-300">calendar_month</span>
+            <p className="text-sm font-bold text-slate-400 mt-3">No appointments scheduled for today</p>
+            <p className="text-xs text-slate-400 mt-1">Patients will show here once registered by the receptionist</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {appointments.map((item) => (
+              <div key={item.qid} className="appointment-item-card p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs font-black text-blue-600">T-{item.token}</span>
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider border ${getStatusBadge(item.displayStatus)}`}>
+                      {item.displayStatus}
                     </span>
-
-                    <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="inline-flex items-center rounded-lg bg-blue-50 px-2.5 py-0.5 text-xs font-bold tabular-nums text-blue-700 ring-1 ring-inset ring-blue-100">
-                          T-{item.token}
-                        </span>
-                        <span
-                          className={[
-                            'inline-flex items-center rounded-lg px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ring-1 ring-inset',
-                            getStatusBadge(item.displayStatus),
-                          ].join(' ')}
-                        >
-                          {item.displayStatus}
-                        </span>
-                      </div>
-                      <p className="mt-1.5 truncate text-base font-bold text-slate-900">{item.patient_name}</p>
-                      <p className="mt-0.5 text-xs text-slate-500">
-                        Priority: <span className="font-semibold text-slate-700">{item.priority || 'Low'}</span>
-                        <span className="px-1.5 text-slate-300">•</span>Score: <span className="font-semibold text-slate-700">{item.final_score}</span>
-                        <span className="px-1.5 text-slate-300">•</span>Wait Bonus: <span className="text-emerald-600 font-semibold">+{item.waiting_bonus || 0}</span>
-                      </p>
-                      {item.patient_contact && (
-                        <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
-                          <span className="material-symbols-outlined text-[14px] leading-none text-slate-400">call</span>
-                          {item.patient_contact}
-                        </p>
-                      )}
-                    </div>
                   </div>
-
-                  <div className="flex shrink-0 flex-col items-start gap-1.5 sm:items-end">
-                    <span className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold tabular-nums text-slate-700">
-                      Pos #{item.queue_position || '—'}
-                    </span>
-                    {item.estimated_wait_time > 0 && (
-                      <span className="text-xs font-medium text-slate-500 tabular-nums">
-                        ~{item.estimated_wait_time} min wait
-                      </span>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+                  <h4 className="font-bold text-slate-900 text-base">{item.patient_name}</h4>
+                  <p className="text-xs text-slate-500 font-bold">
+                    Priority: {item.priority || 'Low'} • Score: {item.final_score} • Wait Bonus: +{item.waiting_bonus || 0}
+                  </p>
+                  {item.patient_contact && (
+                    <p className="text-xs text-slate-500 font-bold mt-0.5">Contact: {item.patient_contact}</p>
+                  )}
+                </div>
+                <div className="text-right">
+                  <span className="px-3 py-1 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-700">
+                    Pos #{item.queue_position || '—'}
+                  </span>
+                  {item.estimated_wait_time > 0 && (
+                    <p className="text-[11px] font-bold text-slate-400 mt-1">~{item.estimated_wait_time} min wait</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </DoctorLayout>
   );

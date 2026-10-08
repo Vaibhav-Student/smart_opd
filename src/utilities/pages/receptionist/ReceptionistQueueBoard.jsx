@@ -187,27 +187,27 @@ export default function ReceptionistQueueBoard() {
     }
   };
 
-  const handleCancel = async (qid) => {
-    if (!window.confirm("Cancel this token? Patient left / wrong entry. This frees the lane.")) return;
-    try {
-      setActionLoading(true);
-      const res = await fetch(`${API_BASE_URL}/queue/cancel/${qid}`, {
-        method: "POST",
-      });
-      const data = await res.json();
-      if (res.ok && data.status === "success") {
-        notify(data.message, "info");
-      } else {
-        notify(data.message || "Could not cancel token", "error");
-      }
-      await fetchBoard();
-    } catch (err) {
-      console.error("Cancel error:", err);
-      notify("Network error cancelling token", "error");
-    } finally {
-      setActionLoading(false);
-    }
-  };
+  // const handleCancel = async (qid) => {
+  //   if (!window.confirm("Cancel this token? Patient left / wrong entry. This frees the lane.")) return;
+  //   try {
+  //     setActionLoading(true);
+  //     const res = await fetch(`${API_BASE_URL}/queue/cancel/${qid}`, {
+  //       method: "POST",
+  //     });
+  //     const data = await res.json();
+  //     if (res.ok && data.status === "success") {
+  //       notify(data.message, "info");
+  //     } else {
+  //       notify(data.message || "Could not cancel token", "error");
+  //     }
+  //     await fetchBoard();
+  //   } catch (err) {
+  //     console.error("Cancel error:", err);
+  //     notify("Network error cancelling token", "error");
+  //   } finally {
+  //     setActionLoading(false);
+  //   }
+  // };
 
   const toggleSkippedList = (did) => {
     setShowSkippedFor((prev) => ({
@@ -408,7 +408,7 @@ export default function ReceptionistQueueBoard() {
         )}
 
         {/* Top 5 Metric Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
             <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
               Waiting in Queue
